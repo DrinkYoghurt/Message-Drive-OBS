@@ -2,8 +2,6 @@
 
 A beautiful, interactive message jar overlay for OBS Studio. Perfect for displaying viewer messages, positive affirmations, or any kind of text content during your streams!
 
-![Message Jar Preview](preview.png)
-
 ## Features
 
 - 🎨 Beautiful glass jar design with realistic effects
