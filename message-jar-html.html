@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OBS Message Jar</title>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // Lucide React icons (inline)
+    const Heart = ({ className }) => (
+      <svg className={className} fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+    );
+
+    const Star = ({ className }) => (
+      <svg className={className} fill="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+      </svg>
+    );
+
+    const Sparkles = ({ className }) => (
+      <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 3v18m-9-9h18m-6.5-6.5 6 6m-6 0 6-6"/>
+      </svg>
+    );
+
+    const Mail = ({ className }) => (
+      <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+        <polyline points="22,6 12,13 2,6"/>
+      </svg>
+    );
+
+    const Smile = ({ className }) => (
+      <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="10"/>
+        <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+        <line x1="9" y1="9" x2="9.01" y2="9"/>
+        <line x1="15" y1="9" x2="15.01" y2="9"/>
+      </svg>
+    );
+
+    const Gift = ({ className }) => (
+      <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <polyline points="20 12 20 22 4 22 4 12"/>
+        <rect x="2" y="7" width="20" height="5"/>
+        <line x1="12" y1="22" x2="12" y2="7"/>
+        <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+        <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+      </svg>
+    );
+
+    function MessageJar() {
+      const [messages, setMessages] = useState([]);
+      const [currentMessage, setCurrentMessage] = useState(null);
+      const [loading, setLoading] = useState(true);
+      const [error, setError] = useState(null);
+
+      useEffect(() => {
+        loadMessages();
+      }, []);
+
+      const loadMessages = async () => {
+        try {
+          const response = await fetch('messages.json');
+          
+          if (!response.ok) {
+            throw new Error('Could not load messages.json');
+          }
+          
+          const data = await response.json();
+          setMessages(data.messages || data);
+          setLoading(false);
+        } catch (err) {
+          console.error('Error loading messages:', err);
+          setError(err.message);
+          
+          // Fallback to sample messages
+          setMessages([
+            { id: 1, text: "You're awesome!", icon: 'heart', author: 'Viewer1' },
+            { id: 2, text: "Keep up the great work!", icon: 'star', author: 'Viewer2' },
+            { id: 3, text: "Thanks for streaming!", icon: 'sparkles', author: 'Viewer3' },
+            { id: 4, text: "Love your content!", icon: 'heart', author: 'Viewer4' },
+            { id: 5, text: "You make my day!", icon: 'smile', author: 'Viewer5' }
+          ]);
+          setLoading(false);
+        }
+      };
+
+      const getIcon = (iconType) => {
+        switch(iconType) {
+          case 'heart': return <Heart className="w-4 h-4 fill-current" />;
+          case 'star': return <Star className="w-4 h-4 fill-current" />;
+          case 'sparkles': return <Sparkles className="w-4 h-4" />;
+          case 'mail': return <Mail className="w-4 h-4" />;
+          case 'smile': return <Smile className="w-4 h-4" />;
+          case 'gift': return <Gift className="w-4 h-4" />;
+          default: return <Heart className="w-4 h-4 fill-current" />;
+        }
+      };
+
+      const drawMessage = () => {
+        if (messages.length === 0) return;
+        const randomIndex = Math.floor(Math.random() * messages.length);
+        setCurrentMessage(messages[randomIndex]);
+      };
+
+      const closeMessage = () => {
+        setCurrentMessage(null);
+      };
+
+      if (loading) {
+        return (
+          <div className="w-full h-screen bg-transparent flex items-center justify-center">
+            <div className="text-2xl font-bold text-purple-600 animate-pulse">
+              Loading messages...
+            </div>
+          </div>
+        );
+      }
+
+      return (
+        <div className="w-full h-screen bg-transparent flex items-center justify-center p-8">
+          <div className="relative">
+            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-gradient-to-b from-amber-700 to-amber-800 rounded-t-lg border-2 border-amber-900 shadow-lg z-10"></div>
+            
+            <div className="relative w-64 h-80 bg-gradient-to-b from-blue-100/40 to-blue-200/40 backdrop-blur-sm rounded-3xl border-4 border-blue-300/60 shadow-2xl overflow-hidden">
+              <div className="absolute top-0 left-4 w-16 h-full bg-gradient-to-r from-white/30 to-transparent pointer-events-none"></div>
+              
+              <div className="absolute inset-6 flex flex-col gap-2 items-center justify-center">
+                {messages.slice(0, 5).map((msg, idx) => (
+                  <div 
+                    key={msg.id}
+                    className="bg-gradient-to-br from-pink-200 to-purple-200 px-3 py-2 rounded-lg text-xs font-medium text-purple-900 shadow-md transform hover:scale-105 transition-transform cursor-pointer"
+                    style={{ 
+                      transform: `rotate(${(idx % 2 === 0 ? 1 : -1) * (idx * 3)}deg)`,
+                      marginLeft: `${(idx % 2 === 0 ? 1 : -1) * (idx * 5)}px`
+                    }}
+                  >
+                    {msg.text.length > 20 ? msg.text.substring(0, 20) + '...' : msg.text}
+                  </div>
+                ))}
+              </div>
+
+              <div className="absolute top-4 right-4 bg-purple-500 text-white rounded-full w-10 h-10 flex items-center justify-center font-bold text-sm shadow-lg">
+                {messages.length}
+              </div>
+
+              <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white/80 px-4 py-2 rounded-lg border-2 border-amber-600">
+                <p className="text-sm font-bold text-amber-800">Messages</p>
+              </div>
+            </div>
+
+            <button
+              onClick={drawMessage}
+              disabled={messages.length === 0}
+              className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-3 px-6 rounded-full shadow-lg transition-all hover:scale-105 active:scale-95 disabled:cursor-not-allowed"
+            >
+              Draw a Message
+            </button>
+          </div>
+
+          {currentMessage && (
+            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+              <div className="bg-gradient-to-br from-purple-100 to-pink-100 p-8 rounded-2xl shadow-2xl max-w-md mx-4 border-4 border-purple-300 animate-bounce">
+                <div className="flex items-center justify-center mb-4">
+                  <div className="text-pink-500 bg-white rounded-full p-3 shadow-lg">
+                    {getIcon(currentMessage.icon)}
+                  </div>
+                </div>
+                <p className="text-xl font-semibold text-purple-900 text-center mb-2">
+                  {currentMessage.text}
+                </p>
+                {currentMessage.author && (
+                  <p className="text-sm text-purple-600 text-center mb-6 italic">
+                    — {currentMessage.author}
+                  </p>
+                )}
+                <button
+                  onClick={closeMessage}
+                  className="w-full bg-gradient-to-r from-pink-500 to-purple-500 hover:from-pink-600 hover:to-purple-600 text-white font-bold py-2 px-4 rounded-lg transition-all"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          )}
+
+          {error && (
+            <div className="fixed top-4 right-4 bg-yellow-100 border-2 border-yellow-400 text-yellow-800 p-3 rounded-lg shadow-lg max-w-xs text-sm">
+              <p className="font-bold">⚠️ Using sample data</p>
+              <p className="text-xs mt-1">Place messages.json file to load your messages</p>
+            </div>
+          )}
+
+          <div className="fixed bottom-4 right-4 bg-white/90 backdrop-blur-sm p-4 rounded-lg shadow-lg max-w-xs border-2 border-purple-200">
+            <h3 className="font-bold text-purple-900 mb-2">Setup:</h3>
+            <ol className="text-sm text-gray-700 space-y-1">
+              <li>1. Export database to messages.json</li>
+              <li>2. Place JSON file in same folder</li>
+              <li>3. Add as Browser Source in OBS</li>
+              <li>4. Set width: 1920, height: 1080</li>
+            </ol>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<MessageJar />, document.getElementById('root'));
+  </script>
+</body>
+</html>
