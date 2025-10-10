@@ -25,7 +25,7 @@ Built for **local use** as a **Browser Source** in OBS (no hosting required).
 
 Unzip:
 ```
-OBS OVERLAY.rar
+Message-Drive-OBS.rar
 ```
 
 Recommended folder:
@@ -40,7 +40,7 @@ C:\Users\<you>\Documents\OBS_Overlays\Message-Drive-OBS\
 1. Open **OBS Studio**
 2. Click **+** under **Sources**
 3. Select **Browser**
-4. Name it (e.g. `Overlay`)
+4. Name it (e.g. `Message Drive`)
 5. Configure:
    -  **Local File:** *Check this box*
    -  **Browse** → Select `message.drive.html` from the extracted folder  
