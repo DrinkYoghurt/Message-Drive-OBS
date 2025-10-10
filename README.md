@@ -4,7 +4,7 @@
 ![Static Badge](https://img.shields.io/badge/Resolution-1920x1080-green)
 ![Static Badge](https://img.shields.io/badge/Status-Ready%20to%20Use-success)
 
-A **OBS overlay** for ArchanthaByte — display messages from a local file, clean and cyber design.  
+A **OBS overlay** for ArcanthaByte — display messages from a local file, clean and cyber design.  
 Built for **local use** as a **Browser Source** in OBS (no hosting required).
 
 ---
@@ -83,4 +83,4 @@ This means that you either didn’t place the `messages.json` file in the same *
 - Keep the local folder path short and free of special characters.
 
 
-**Made with ❤️ for ArchanthaByte.**
+**Made with ❤️ for ArcanthaByte.**
