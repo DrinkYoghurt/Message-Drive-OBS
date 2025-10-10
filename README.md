@@ -59,8 +59,8 @@ Inside the overlay’s JavaScript file, you’ll find the message setup like thi
   "messages": [
     {
       "id": 1,
-      "text": "Je bent een geweldige streamer! Blijf doorgaan!",
-      "author": "KijkerFan123"
+      "text": "Arc is cute mhm pass it on",
+      "author": "Everyone"
     },
 ```
 You  can use this to add more or change messages.
