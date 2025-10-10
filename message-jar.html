@@ -126,8 +126,8 @@
         setEjecting(true);
         const randomIndex = Math.floor(Math.random() * availableMessages.length);
         const selected = availableMessages[randomIndex];
-
-        // haalt de message weg van de pool
+        
+        // Haalt de message weg van de pool
         const newAvailable = availableMessages.filter((_, index) => index !== randomIndex);
         setAvailableMessages(newAvailable);
         
@@ -156,7 +156,7 @@
 
       return (
         <div className="w-full h-screen bg-transparent relative">
-          {/* Harde Schijf Unit - Bottom Left */}
+          {/* Harde Schijf - Links Onderin */}
           <div className="absolute bottom-8 left-8">
             {/* Main Schijf Body */}
             <div className="relative">
@@ -225,7 +225,7 @@
                   <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-green-500 to-transparent"></div>
                 </div>
                 
-                {/* LED Indicator */}
+                {/* LED Indicatoren */}
                 <div className="absolute top-4 right-4 flex gap-2">
                   <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" style={{boxShadow: '0 0 5px #00ff00'}}></div>
                   <div className="w-2 h-2 rounded-full bg-green-500/30"></div>
@@ -244,13 +244,13 @@
             </div>
           </div>
 
-          {/* Message Display - Midden scherm met een blur */}
+          {/* Message Display - Midden in Scherm met overlay */}
           {currentMessage && (
-            <div className="fixed inset-0 backdrop-blur-sm flex items-start justify-center z-50 overflow-y-auto custom-scrollbar p-4">
-              <div className="corner-cut bg-black border-4 border-green-500 p-8 w-full max-w-2xl my-auto relative"
+            <div className="fixed inset-0 flex items-start justify-center z-50 overflow-y-auto custom-scrollbar p-4 pointer-events-none">
+              <div className="corner-cut bg-black/95 backdrop-blur-lg border-4 border-green-500 p-8 w-full max-w-2xl my-auto relative pointer-events-auto"
                    style={{boxShadow: '0 0 30px rgba(0, 255, 0, 0.5), inset 0 0 30px rgba(0, 255, 0, 0.1)'}}>
                 
-                {/* Corner brackets */}
+                {/* Hoeken brackets */}
                 <div className="absolute -top-2 -left-2 text-green-400 text-3xl font-bold">┏</div>
                 <div className="absolute -top-2 -right-2 text-green-400 text-3xl font-bold">┓</div>
                 <div className="absolute -bottom-2 -left-2 text-green-400 text-3xl font-bold">┗</div>
@@ -271,7 +271,7 @@
                   </div>
                 </div>
                 
-                {/* Message inhoud*/}
+                {/* Message Inhoud */}
                 <div className="bg-black/40 border border-green-500/30 p-6 rounded mb-4">
                   <p className="text-green-400 text-xl font-mono leading-relaxed mb-4">
                     {currentMessage.text}
