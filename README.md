@@ -25,12 +25,12 @@ Built for **local use** as a **Browser Source** in OBS (no hosting required).
 
 Unzip:
 ```
-Message-Drive-OBS.rar
+Message-Drive-OBS-1.0.rar
 ```
 
 Recommended folder:
 ```
-C:\Users\<you>\Documents\OBS_Overlays\Message-Drive-OBS\
+C:\Users\<you>\Documents\OBS_Overlays\Message-Drive-OBS-1.0\
 ```
 
 ---
