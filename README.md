@@ -70,11 +70,8 @@ You  can use this to add more or change messages.
 ### 4️⃣ Using it
 
 Inside OBS, there is a button that appears when you select the **Browser Source** called **Interact**.  
-
 Click it, then click **Eject Message** — a message will pop up from the `messages.json` file.  
-
 If there's an error, it should load dummy messages, and you’ll see an error displayed in the top-right corner of the overlay.  
-
 This means that you either didn’t place the `messages.json` file in the same **directory**, or it doesn’t exist.
 
 ---
