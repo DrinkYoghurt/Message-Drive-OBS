@@ -1,4 +1,4 @@
-# 🎥 OBS Overlay
+# OBS Overlay
 
 ![Static Badge](https://img.shields.io/badge/OBS-Overlay-blue?logo=obsstudio)
 ![Static Badge](https://img.shields.io/badge/Resolution-1920x1080-green)
