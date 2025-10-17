@@ -40,7 +40,7 @@ Message-Drive-OBS-*.rar
 
 Recommended folder:
 ```bash
-C:\Users\<you>\Documents\OBS_Overlays\Message-Drive-OBS-*\
+C:\Users\*\Documents\OBS_Overlays\Message-Drive-OBS-*\
 ```
 
 Your folder should look like:
@@ -59,7 +59,7 @@ Your folder should look like:
 3. Name it something like `Message Drive`
 4. Enable **Local File**
 5. **Browse** → Select `message-drive.html`
-   *(e.g. `C:\Users\<you>\Documents\OBS_Overlays\Message-Drive-OBS-*\message-drive.html`)*  
+   *(e.g. `C:\Users\*\Documents\OBS_Overlays\Message-Drive-OBS-*\message-drive.html`)*  
 6. Set:
    - **Width:** `1920`  
    - **Height:** `1080`
