@@ -1,36 +1,53 @@
-# OBS Overlay
+# OBS Message Drive Overlay
 
 ![Static Badge](https://img.shields.io/badge/OBS-Overlay-blue?logo=obsstudio)
 ![Static Badge](https://img.shields.io/badge/Resolution-1920x1080-green)
 ![Static Badge](https://img.shields.io/badge/Status-Ready%20to%20Use-success)
 
-A **OBS overlay** for ArcanthaByte — display messages from a local file, clean and cyber design.  
-Built for **local use** as a **Browser Source** in OBS (no hosting required).
+A **cyber-aesthetic OBS overlay** built for **ArcanthaByte** — reads messages straight from a local `messages.json` file.  
+No servers, no API 
 
 ---
 
-##  Features
-
--  React-based dynamic message display  
--  100% local (no web hosting needed)  
--  Fully customizable messages  
--  Designed for **1920×1080** layout  
--  Lightweight and easy to configure  
+## Features
+ 
+-  **Local JSON message source** (`messages.json`)  
+-  **Lockable draggable drive** UI  
+-  **Matrix rain** background effect  
+-  **Auto-detects changes** in `messages.json`  
+-  Works as a **local Browser Source** (no hosting)  
+-  Smart fallback mode if `messages.json` isn’t found  
 
 ---
 
-##  Installation & Setup
+##  Files Overview
+
+| File | Description |
+|------|--------------|
+| `message-drive.html` | The main overlay file for OBS (React-based) |
+| `messages.json` | Local message data source |
+
+---
+
+## Installation & Setup
 
 ### 1️⃣ Extract the Files
 
 Unzip:
-```
-Message-Drive-OBS-1.0.rar
+```bash
+Message-Drive-OBS-*.rar
 ```
 
 Recommended folder:
+```bash
+C:\Users\<you>\Documents\OBS_Overlays\Message-Drive-OBS-*\
 ```
-C:\Users\<you>\Documents\OBS_Overlays\Message-Drive-OBS-1.0\
+
+Your folder should look like:
+```
+📁 Message-Drive-OBS-*
+ ├── message-drive.html
+ ├── messages.json
 ```
 
 ---
@@ -38,23 +55,24 @@ C:\Users\<you>\Documents\OBS_Overlays\Message-Drive-OBS-1.0\
 ### 2️⃣ Add to OBS as a Browser Source
 
 1. Open **OBS Studio**
-2. Click **+** under **Sources**
-3. Select **Browser**
-4. Name it (e.g. `Message Drive`)
-5. Configure:
-   -  **Local File:** *Check this box*
-   -  **Browse** → Select `message.drive.html` from the extracted folder  
-     *(Example: `C:\Users\<you>\Documents\OBS Overlay\message.drive.html`)*
-   -  **Width:** `1920`  
-     **Height:** `1080`
+2. In **Sources**, click **+ → Browser**
+3. Name it something like `Message Drive`
+4. Enable **Local File**
+5. **Browse** → Select `message-drive.html`
+   *(e.g. `C:\Users\<you>\Documents\OBS_Overlays\Message-Drive-OBS-*\message-drive.html`)*  
+6. Set:
+   - **Width:** `1920`  
+   - **Height:** `1080`
+
+✅ That’s it — the overlay should appear instantly.
 
 ---
 
-### 3️⃣ Customize Messages (React Example)
+### 3️⃣ Customize Messages
 
-Inside the overlay’s JavaScript file, you’ll find the message setup like this:
+Open `messages.json` and tweak your messages:
 
-```jsx
+```json
 {
   "messages": [
     {
@@ -62,25 +80,38 @@ Inside the overlay’s JavaScript file, you’ll find the message setup like thi
       "text": "Arc is cute mhm pass it on",
       "author": "Everyone"
     },
+    {
+      "id": 2,
+      "text": "Don't say no you",
+      "author": "Everyone"
+    }
+  ]
+}
 ```
-You  can use this to add more or change messages.
+
+💡 When you edit `messages.json`, the overlay **auto-detects the change** and resets its stored data.
 
 ---
 
-### 4️⃣ Using it
+### 4️⃣ How to Use It In OBS
 
-Inside OBS, there is a button that appears when you select the **Browser Source** called **Interact**.  
-Click it, then click **Eject Message** — a message will pop up from the `messages.json` file.  
-If there's an error, it should load dummy messages, and you’ll see an error displayed in the top-right corner of the overlay.  
-This means that you either didn’t place the `messages.json` file in the same **directory**, or it doesn’t exist.
+- Click your **Browser Source**
+- Press the **Interact** button in OBS
+- Hit the **▶ EJECT MESSAGE** button  
+  → A random message pops up from your local file!  
+
+If `messages.json` is missing or invalid, a **fallback mode** with dummy data will load automatically.  
+You’ll see a yellow “⚠ FALLBACK MODE” box on the top right.
 
 ---
 
-##  Tips
+### 5️⃣ Tips & Troubleshooting
 
-- If the overlay doesn’t appear:  
-  → Feel free to ask me for help  
-- Keep the local folder path short and free of special characters.
+- Keep both files (`message-drive.html` & `messages.json`) in the **same folder**  
+- Avoid special characters in folder names  
+- Don’t resize your OBS source — it’s made for 1920×1080  
+- To reload messages manually, delete the browser source cache or restart OBS  
 
+---
 
-**Made with ❤️ for ArcanthaByte.**
+**Made with ❤️ for ArcanthaByte.**  
