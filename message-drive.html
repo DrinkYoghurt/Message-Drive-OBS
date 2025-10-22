@@ -28,7 +28,9 @@
       scroll-behavior: smooth;
       scrollbar-width: none;
       -ms-overflow-style: none;
+      -webkit-overflow-scrolling: touch;
     }
+    
     .custom-scrollbar::-webkit-scrollbar {
       display: none;
     }
@@ -54,7 +56,7 @@
       0% { transform: translateY(0); opacity: 0; }
       10% { opacity: 0.15; }
       90% { opacity: 0.15; }
-      100% { transform: translateY(400px); opacity: 0; }
+      100% { transform: translateY(100vh); opacity: 0; }
     }
 
     .scanline {
@@ -67,10 +69,6 @@
 
     .eject-animation {
       animation: eject 0.6s ease-out forwards;
-    }
-
-    .corner-cut {
-      clip-path: polygon(20px 0%, 100% 0%, 100% calc(100% - 20px), calc(100% - 20px) 100%, 0% 100%, 0% 20px);
     }
 
     .matrix-char {
@@ -156,48 +154,38 @@
     }
 
     function MessageDrive() {
-      const [messages, setMessages] = useState(() => {
-        const saved = localStorage.getItem('messages');
-        return saved ? JSON.parse(saved) : [];
-      });
-
-      const [availableMessages, setAvailableMessages] = useState(() => {
-        const saved = localStorage.getItem('availableMessages');
-        return saved ? JSON.parse(saved) : [];
-      });
-
+      const [messages, setMessages] = useState([]);
+      const [availableMessages, setAvailableMessages] = useState([]);
       const [currentMessage, setCurrentMessage] = useState(null);
       const [ejecting, setEjecting] = useState(false);
       const [loading, setLoading] = useState(true);
       const [error, setError] = useState(null);
+      
       const [drivePosition, setDrivePosition] = useState(() => {
-        const saved = localStorage.getItem('drivePosition');
-        if (saved) return JSON.parse(saved);
+        try {
+          const saved = localStorage.getItem('drivePosition');
+          if (saved) return JSON.parse(saved);
+        } catch (e) {}
         return { x: 32, y: window.innerHeight - 400 };
       });
+      
       const [isDragging, setIsDragging] = useState(false);
       const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-      const [isLocked, setIsLocked] = useState(true);
+      
+      const [isLocked, setIsLocked] = useState(() => {
+        try {
+          const saved = localStorage.getItem('isLocked');
+          if (saved === 'false') return false;
+          return true; // Default to locked
+        } catch (e) {
+          return true;
+        }
+      });
 
       const driveRef = useRef(null);
       const modalRef = useRef(null);
 
       useEffect(() => { loadMessages(); }, []);
-
-      useEffect(() => {
-        localStorage.setItem('drivePosition', JSON.stringify(drivePosition));
-      }, [drivePosition]);
-
-      useEffect(() => {
-        localStorage.setItem('messages', JSON.stringify(messages));
-        localStorage.setItem('availableMessages', JSON.stringify(availableMessages));
-      }, [messages, availableMessages]);
-
-
-      useEffect(() => {
-        localStorage.setItem('messages', JSON.stringify(messages));
-        localStorage.setItem('availableMessages', JSON.stringify(availableMessages));
-      }, [messages, availableMessages]);
 
       useEffect(() => {
         const handleMouseMove = (e) => {
@@ -222,6 +210,35 @@
         };
       }, [isDragging, dragOffset]);
 
+      useEffect(() => {
+        try {
+          localStorage.setItem('drivePosition', JSON.stringify(drivePosition));
+        } catch (e) {
+          console.error('Failed to save position:', e);
+        }
+      }, [drivePosition]);
+
+      useEffect(() => {
+        try {
+          localStorage.setItem('isLocked', JSON.stringify(isLocked));
+        } catch (e) {
+          console.error('Failed to save lock state:', e);
+        }
+      }, [isLocked]);
+
+      // Only save messages after they've been loaded (not on initialization)
+      useEffect(() => {
+        if (messages.length > 0 && !loading) {
+          try {
+            localStorage.setItem('messages', JSON.stringify(messages));
+            localStorage.setItem('availableMessages', JSON.stringify(availableMessages));
+            console.log('Saved messages state:', availableMessages.length, 'remaining of', messages.length);
+          } catch (e) {
+            console.log('Could not save to localStorage (this is normal in OBS)');
+          }
+        }
+      }, [availableMessages, loading]);
+
       const handleMouseDown = (e) => {
         if (e.target.closest('button') || isLocked) return;
         const rect = e.currentTarget.getBoundingClientRect();
@@ -231,63 +248,73 @@
 
       const toggleLock = () => setIsLocked(!isLocked);
 
-     const loadMessages = async () => {
-      try {
-        const response = await fetch('messages.json');
-        if (!response.ok) throw new Error('Could not load messages.json');
-        
-        const data = await response.json();
-        const loadedMessages = data.messages || data;
+      const loadMessages = async () => {
+        try {
+          console.log('Attempting to load active_messages.json...');
+          const response = await fetch('active_messages.json');
+          
+          if (!response.ok) {
+            throw new Error('Could not load active_messages.json');
+          }
+          
+          const data = await response.json();
+          console.log('Loaded data:', data);
+          
+          const loadedMessages = data.messages || data;
+          console.log('Parsed messages:', loadedMessages.length, 'messages');
 
-        // maak een hash van alle messages
-        const newHash = btoa(loadedMessages.map(m => m.text || '').join('|'));
-        const savedHash = localStorage.getItem('messagesHash');
+          if (!loadedMessages || loadedMessages.length === 0) {
+            throw new Error('No messages found in file');
+          }
 
-        // als er een aanpassing is in messages.json, reset stored messages
-        if (savedHash !== newHash) {
-          console.log('Detected new messages.json — resetting saved data.');
-          localStorage.removeItem('messages');
-          localStorage.removeItem('availableMessages');
-          localStorage.setItem('messagesHash', newHash);
+          // Try to restore saved progress
+          try {
+            const savedMessages = localStorage.getItem('messages');
+            const savedAvailable = localStorage.getItem('availableMessages');
+            
+            if (savedMessages && savedAvailable) {
+              const parsedMessages = JSON.parse(savedMessages);
+              const parsedAvailable = JSON.parse(savedAvailable);
+              
+              // Verify saved data matches current file
+              if (parsedMessages.length === loadedMessages.length) {
+                console.log('✓ Restored saved progress:', parsedAvailable.length, 'remaining of', parsedMessages.length);
+                setMessages(parsedMessages);
+                setAvailableMessages(parsedAvailable);
+                setLoading(false);
+                return;
+              } else {
+                console.log('File changed, loading fresh messages');
+              }
+            }
+          } catch (e) {
+            console.log('No saved progress found, loading fresh');
+          }
 
+          // Load fresh messages
           setMessages(loadedMessages);
           setAvailableMessages([...loadedMessages]);
+          
           setLoading(false);
-          return;
+          console.log('✓ Messages loaded successfully! Total:', loadedMessages.length);
+          
+        } catch (err) {
+          console.error('Error loading messages:', err);
+          setError(err.message);
+
+          const fallbackMessages = [
+            { id: 1, text: "SYSTEM.MSG: You're awesome!", author: 'User_001' },
+            { id: 2, text: "DATA.LOG: Keep up the great work!", author: 'User_002' },
+            { id: 3, text: "INFO.TXT: Thanks for streaming!", author: 'User_003' },
+            { id: 4, text: "NOTE.DAT: Love your content!", author: 'User_004' },
+            { id: 5, text: "MSG.SYS: You make my day!", author: 'User_005' }
+          ];
+
+          setMessages(fallbackMessages);
+          setAvailableMessages([...fallbackMessages]);
+          setLoading(false);
         }
-
-
-        // Laad van storage als het mogelijk is
-        const savedMessages = localStorage.getItem('messages');
-        const savedAvailable = localStorage.getItem('availableMessages');
-
-        if (savedMessages && savedAvailable) {
-          setMessages(JSON.parse(savedMessages));
-          setAvailableMessages(JSON.parse(savedAvailable));
-        } else {
-          setMessages(loadedMessages);
-          setAvailableMessages([...loadedMessages]);
-        }
-
-        setLoading(false);
-      } catch (err) {
-        console.error('Error loading messages:', err);
-        setError(err.message);
-
-        const fallbackMessages = [
-          { id: 1, text: "SYSTEM.MSG: You're awesome!", author: 'User_001' },
-          { id: 2, text: "DATA.LOG: Keep up the great work!", author: 'User_002' },
-          { id: 3, text: "INFO.TXT: Thanks for streaming!", author: 'User_003' },
-          { id: 4, text: "NOTE.DAT: Love your content!", author: 'User_004' },
-          { id: 5, text: "MSG.SYS: You make my day!", author: 'User_005' }
-        ];
-
-        setMessages(fallbackMessages);
-        setAvailableMessages([...fallbackMessages]);
-        setLoading(false);
-      }
-    };
-
+      };
 
       const ejectMessage = () => {
         if (availableMessages.length === 0 || ejecting) {
@@ -321,8 +348,6 @@
 
       return (
         <div className="w-full h-screen bg-transparent relative">
-
-
           {/* Draggable Drive */}
           <div
             className="absolute"
@@ -394,7 +419,7 @@
 
                 <button
                   onClick={toggleLock}
-                  className="absolute top-4 right-4 hover:opacity-80 transition-all z-20 p-1"
+                  className="absolute top-6 right-6 hover:opacity-80 transition-all z-20 p-1"
                   style={{
                     filter: isLocked
                       ? 'drop-shadow(0 0 4px rgba(0,255,0,0.8))'
@@ -431,20 +456,20 @@
           </div>
 
           {currentMessage && (
-            <div className="fixed inset-0 flex items-start justify-center z-50 overflow-y-auto custom-scrollbar p-4 pointer-events-none">
+            <div className="fixed inset-0 flex items-center justify-center z-50 p-4 overflow-y-auto custom-scrollbar pointer-events-auto">
               <div
                 ref={modalRef}
-                className="border-4 border-green-500 p-8 w-full max-w-2xl my-auto relative pointer-events-auto overflow-hidden"
+                className="border-4 border-green-500 p-8 w-full max-w-2xl max-h-[90vh] my-auto relative pointer-events-auto overflow-visible"
                 style={{
-                  background: 'rgba(0,0,0,0.999)',
+                  background: 'rgba(0,0,0,0.98)',
                   boxShadow: '0 0 30px rgba(0,255,0,0.5), inset 0 0 30px rgba(0,255,0,0.1)'
                 }}
               >
                 <MatrixRain containerRef={modalRef} />
-                <div className="absolute -top-2 -left-2 text-green-400 text-3xl font-bold z-10">┏</div>
-                <div className="absolute -top-2 -right-2 text-green-400 text-3xl font-bold z-10">┓</div>
-                <div className="absolute -bottom-2 -left-2 text-green-400 text-3xl font-bold z-10">┗</div>
-                <div className="absolute -bottom-2 -right-2 text-green-400 text-3xl font-bold z-10">┛</div>
+                <div className="absolute top-2 left-2 text-green-400 text-2xl font-bold leading-none pointer-events-none z-10">┏</div>
+                <div className="absolute top-2 right-2 text-green-400 text-2xl font-bold leading-none pointer-events-none z-10">┓</div>
+                <div className="absolute bottom-2 left-2 text-green-400 text-2xl font-bold leading-none pointer-events-none z-10">┗</div>
+                <div className="absolute bottom-2 right-2 text-green-400 text-2xl font-bold leading-none pointer-events-none z-10">┛</div>
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
                   <div className="scanline w-full h-12 bg-gradient-to-b from-transparent via-green-500/10 to-transparent"></div>
                 </div>
@@ -457,7 +482,7 @@
                   </div>
                 </div>
                 <div className="bg-black/40 border border-green-500/30 p-6 rounded mb-4 relative z-10">
-                  <p className="text-green-400 text-xl font-mono leading-relaxed mb-4">
+                  <p className="text-green-400 text-xl font-mono leading-relaxed mb-4 whitespace-pre-line">
                     {currentMessage.text}
                   </p>
                   {currentMessage.author && (
