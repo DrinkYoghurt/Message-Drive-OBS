@@ -227,6 +227,7 @@ If something isn't working:
 5. **Read the error** - If there's a yellow warning, it tells you what's wrong
 
 **Arc: Just ask me 💚**
+
 ---
 
 ## You're All Set!
