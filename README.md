@@ -220,14 +220,13 @@ Look for the green **`<> Code`** button on the GitHub page, then click "Download
 
 If something isn't working:
 
-**Arc: Just ask me 💚**
-
 1. **Check the file names** - Make sure they're spelled exactly right
 2. **Check the file location** - Everything should be in the same folder
 3. **Refresh OBS** - Right-click source → Refresh
 4. **Restart OBS** - Sometimes a fresh start helps!
 5. **Read the error** - If there's a yellow warning, it tells you what's wrong
 
+**Arc: Just ask me 💚**
 ---
 
 ## You're All Set!
