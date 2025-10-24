@@ -5,41 +5,41 @@
 ![Static Badge](https://img.shields.io/badge/Status-Ready%20to%20Use-success)
 
 A **cyber-aesthetic OBS overlay** built for **ArcanthaByte** — reads messages straight from a local JSON file.  
-No servers, no APIs, just pure local goodness! 🎮💚
+No servers, no APIs.
 
-> **📥 Download:** Get the latest version from [GitHub Releases](https://github.com/username/message-drive-obs/releases) or use the green **Code** button → **Download ZIP**
+> **Download:** Get the latest version from [GitHub Releases](https://github.com/username/message-drive-obs/releases) or use the green **Code** button → **Download ZIP**
 
 ---
 
-## ✨ Features
+## Features
  
-- 📁 **Local JSON message source** (`active_messages.json`)  
-- 🔒 **Lockable draggable drive** UI with position persistence
-- 🌧️ **Matrix rain** background effect with scanlines
-- 🔄 **Auto-detects changes** in message files
-- 🎯 **Smart message tracking** - remembers what's been shown
-- 📱 **Responsive message display** with proper text wrapping and scrolling
-- ⌨️ **Keyboard shortcuts** - Press ESC to close messages
-- 💾 **LocalStorage persistence** for drive position and progress
-- 🛡️ **Fallback mode** if JSON file isn't found
-- 🎨 **Fully contained UI** - text never overflows the borders
+- **Local JSON message source** (`active_messages.json`)  
+- **Lockable draggable drive** UI with position persistence
+- **Matrix rain** background effect with scanlines
+- **Auto-detects changes** in message files
+- **Smart message tracking** - remembers what's been shown
+- **Responsive message display** with proper text wrapping and scrolling
+- **Keyboard shortcuts** - Press ESC to close messages
+- **LocalStorage persistence** for drive position and progress
+- **Fallback mode** if JSON file isn't found
+- **Fully contained UI** - text never overflows the borders
 
 ---
 
-## 📦 Files Overview
+## Files Overview
 
 | File | Description |
 |------|-------------|
 | `message-drive.html` | Main overlay file for OBS (React-based, standalone) |
 | `active_messages.json` | Active messages for the anniversary celebration |
-| `inactive_messages.json` | Additional messages (not currently loaded) |
+| `reasons.json` | Additional messages (not currently loaded) |
 | `README.md` | This file! Setup instructions and documentation |
 
 ---
 
-## 🚀 Installation & Setup
+## Installation & Setup
 
-### 1️⃣ Download from GitHub
+### 1️ Download from GitHub
 
 **Easy Method (Recommended for Beginners):**
 
@@ -51,12 +51,6 @@ No servers, no APIs, just pure local goodness! 🎮💚
 6. Choose where to extract (recommended: `C:\Users\YourName\Documents\OBS_Overlays\`)
 7. Click **Extract**
 
-**Alternative Method (If you have Git installed):**
-```bash
-git clone https://github.com/username/message-drive-obs.git
-cd message-drive-obs
-```
-
 ---
 
 ### 2️⃣ Verify Your Files
@@ -64,10 +58,10 @@ cd message-drive-obs
 After extraction, your folder should contain:
 ```
 📁 Message-Drive-OBS
- ├── 📄 message-drive.html
- ├── 📄 active_messages.json
- ├── 📄 inactive_messages.json
- └── 📄 README.md
+ ├── message-drive.html
+ ├── active_messages.json
+ ├── inactive_messages.json
+ └── README.md
 ```
 
 ✅ If you see these files, you're ready to proceed!
