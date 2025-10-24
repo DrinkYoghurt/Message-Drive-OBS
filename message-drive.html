@@ -26,13 +26,25 @@
     /* Custom scrollbar */
     .custom-scrollbar {
       scroll-behavior: smooth;
-      scrollbar-width: none;
-      -ms-overflow-style: none;
-      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 255, 0, 0.3) transparent;
     }
     
     .custom-scrollbar::-webkit-scrollbar {
-      display: none;
+      width: 8px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: rgba(0, 255, 0, 0.3);
+      border-radius: 4px;
+    }
+
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 255, 0, 0.5);
     }
 
     @keyframes scanline {
@@ -176,7 +188,7 @@
         try {
           const saved = localStorage.getItem('isLocked');
           if (saved === 'false') return false;
-          return true; // Default to locked
+          return true;
         } catch (e) {
           return true;
         }
@@ -186,6 +198,17 @@
       const modalRef = useRef(null);
 
       useEffect(() => { loadMessages(); }, []);
+
+      useEffect(() => {
+        const handleEscape = (e) => {
+          if (e.key === 'Escape' && currentMessage) {
+            closeMessage();
+          }
+        };
+
+        document.addEventListener('keydown', handleEscape);
+        return () => document.removeEventListener('keydown', handleEscape);
+      }, [currentMessage]);
 
       useEffect(() => {
         const handleMouseMove = (e) => {
@@ -226,7 +249,6 @@
         }
       }, [isLocked]);
 
-      // Only save messages after they've been loaded (not on initialization)
       useEffect(() => {
         if (messages.length > 0 && !loading) {
           try {
@@ -267,7 +289,6 @@
             throw new Error('No messages found in file');
           }
 
-          // Try to restore saved progress
           try {
             const savedMessages = localStorage.getItem('messages');
             const savedAvailable = localStorage.getItem('availableMessages');
@@ -276,7 +297,6 @@
               const parsedMessages = JSON.parse(savedMessages);
               const parsedAvailable = JSON.parse(savedAvailable);
               
-              // Verify saved data matches current file
               if (parsedMessages.length === loadedMessages.length) {
                 console.log('✓ Restored saved progress:', parsedAvailable.length, 'remaining of', parsedMessages.length);
                 setMessages(parsedMessages);
@@ -291,7 +311,6 @@
             console.log('No saved progress found, loading fresh');
           }
 
-          // Load fresh messages
           setMessages(loadedMessages);
           setAvailableMessages([...loadedMessages]);
           
@@ -348,7 +367,6 @@
 
       return (
         <div className="w-full h-screen bg-transparent relative">
-          {/* Draggable Drive */}
           <div
             className="absolute"
             style={{
@@ -456,10 +474,10 @@
           </div>
 
           {currentMessage && (
-            <div className="fixed inset-0 flex items-center justify-center z-50 p-4 overflow-y-auto custom-scrollbar pointer-events-auto">
+            <div className="fixed inset-0 flex items-center justify-center z-50 p-4 pointer-events-auto">
               <div
                 ref={modalRef}
-                className="border-4 border-green-500 p-8 w-full max-w-2xl max-h-[90vh] my-auto relative pointer-events-auto overflow-visible"
+                className="border-4 border-green-500 p-6 w-full max-w-2xl max-h-[90vh] relative pointer-events-auto flex flex-col"
                 style={{
                   background: 'rgba(0,0,0,0.98)',
                   boxShadow: '0 0 30px rgba(0,255,0,0.5), inset 0 0 30px rgba(0,255,0,0.1)'
@@ -473,7 +491,8 @@
                 <div className="absolute inset-0 pointer-events-none overflow-hidden">
                   <div className="scanline w-full h-12 bg-gradient-to-b from-transparent via-green-500/10 to-transparent"></div>
                 </div>
-                <div className="border-b-2 border-green-500/50 pb-3 mb-4 relative z-10">
+                
+                <div className="border-b-2 border-green-500/50 pb-3 mb-4 relative z-10 flex-shrink-0">
                   <div className="text-green-400 text-xs font-mono mb-1">
                     ╔═══════════════════════════════════════╗
                   </div>
@@ -481,8 +500,9 @@
                     &gt;&gt; DATA RETRIEVED
                   </div>
                 </div>
-                <div className="bg-black/40 border border-green-500/30 p-6 rounded mb-4 relative z-10">
-                  <p className="text-green-400 text-xl font-mono leading-relaxed mb-4 whitespace-pre-line">
+
+                <div className="bg-black/40 border border-green-500/30 p-6 rounded mb-4 relative z-10 overflow-y-auto custom-scrollbar flex-1 min-h-0">
+                  <p className="text-green-400 text-xl font-mono leading-relaxed mb-4 whitespace-pre-wrap break-words">
                     {currentMessage.text}
                   </p>
                   {currentMessage.author && (
@@ -491,7 +511,8 @@
                     </p>
                   )}
                 </div>
-                <div className="border-t-2 border-green-500/50 pt-3 relative z-10">
+
+                <div className="border-t-2 border-green-500/50 pt-3 relative z-10 flex-shrink-0">
                   <div className="text-green-400 text-xs font-mono mb-2">
                     ╚═══════════════════════════════════════╝
                   </div>
