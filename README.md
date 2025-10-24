@@ -226,7 +226,7 @@ If something isn't working:
 4. **Restart OBS** - Sometimes a fresh start helps!
 5. **Read the error** - If there's a yellow warning, it tells you what's wrong
 
-**Arc: Just ask me 💚**
+**Arc you can just ask me anytime 💚**
 
 ---
 
